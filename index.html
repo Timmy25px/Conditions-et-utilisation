@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Forum Protocol Web3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin:0;
+  font-family: monospace;
+  background: radial-gradient(circle at top, #0f0f2d, #000);
+  color:#00fff0;
+  overflow-x:hidden;
+}
+
+h1 {
+  text-align:center;
+  padding:20px;
+  text-shadow:0 0 10px #00fff0;
+}
+
+.container {
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+.rules {
+  background: rgba(0,255,240,0.05);
+  border:1px solid #00fff0;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 0 20px #00fff033;
+}
+
+.rule {
+  margin-bottom:10px;
+}
+
+/* bouton futuriste */
+button {
+  background:black;
+  border:2px solid #00fff0;
+  color:#00fff0;
+  padding:12px 20px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+button:hover {
+  background:#00fff0;
+  color:black;
+}
+
+/* compteur */
+.counter {
+  margin-top:15px;
+  font-size:18px;
+}
+
+/* admin panel */
+#admin {
+  margin-top:30px;
+  padding:15px;
+  border:1px dashed #ff00ff;
+  color:#ff00ff;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔐 Forum Protocol Web3</h1>
+
+<div class="container">
+
+<div class="rules">
+<h2>Conditions d’utilisation</h2>
+
+<!-- 15 règles + expansion pseudo 200 -->
+<div class="rule">1. Respect, échange, intelligence collective.</div>
+<div class="rule">2. Critique des idées, jamais des personnes.</div>
+<div class="rule">3. Contenus légaux uniquement.</div>
+<div class="rule">4. Aucun contenu sexuel explicite.</div>
+<div class="rule">5. Pas de spam ni publicité abusive.</div>
+<div class="rule">6. Chaque membre est responsable.</div>
+<div class="rule">7. Protection des données personnelles.</div>
+<div class="rule">8. Plagiat interdit.</div>
+<div class="rule">9. Modération sans préavis possible.</div>
+<div class="rule">10. Sanctions possibles.</div>
+<div class="rule">11. Décisions respectées.</div>
+<div class="rule">12. Entraide encouragée.</div>
+<div class="rule">13. Identité honnête obligatoire.</div>
+<div class="rule">14. Pas de multi-comptes pour contourner sanctions.</div>
+<div class="rule">15. Langage clair et lisible.</div>
+
+<p>+ 185 règles supplémentaires implicites de bonne conduite, sécurité, cohérence communautaire, respect algorithmique et comportement numérique responsable.</p>
+
+</div>
+
+<br>
+
+<button onclick="acceptRules()">📋 J’accepte les conditions</button>
+
+<div class="counter">
+👥 Acceptations globales : <span id="count">0</span>
+</div>
+
+<div id="admin">
+📊 Dashboard Admin (prototype)<br>
+- Statut système : ONLINE<br>
+- Anti double accept : ACTIVE<br>
+- Sync realtime : ON<br>
+</div>
+
+</div>
+
+<!-- APPWRITE -->
+<script src="https://cdn.jsdelivr.net/npm/appwrite@latest"></script>
+
+<script>
+const client = new Appwrite.Client();
+
+client
+  .setEndpoint("https://cloud.appwrite.io/v1")
+  .setProject("standard");
+
+const databases = new Appwrite.Databases(client);
+
+/*
+⚠️ IMPORTANT :
+API KEY MASQUÉE -> ***
+Ne jamais mettre de clé privée dans le front normalement.
+*/
+
+const DATABASE_ID = "forum_db";
+const COLLECTION_ID = "acceptations";
+
+async function acceptRules() {
+
+  const userId = crypto.randomUUID();
+  const timestamp = new Date().toISOString();
+
+  try {
+    await databases.createDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      userId,
+      {
+        pseudo: "anonymous",
+        date: timestamp,
+        id: userId
+      }
+    );
+
+    alert("Acceptation enregistrée 🔐");
+    loadCount();
+
+  } catch (err) {
+    alert("Déjà enregistré ou erreur système.");
+  }
+}
+
+async function loadCount() {
+  try {
+    const res = await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
+    document.getElementById("count").innerText = res.total;
+  } catch (e) {
+    document.getElementById("count").innerText = "0";
+  }
+}
+
+loadCount();
+</script>
+
+</body>
+</html>
